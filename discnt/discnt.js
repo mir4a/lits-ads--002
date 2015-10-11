@@ -24,11 +24,11 @@ var inputs = splitArguments(process.argv);
  */
 function fileListHelper( inputs, ext ) {
   var fileList = [],
-      ext = ext || '.in';
+    ext = ext || '.in';
 
   if ( typeof inputs === 'array' ) {
     fileList = [];
-    inputs.forEach(function(val, i, array){
+    inputs.forEach(function ( val, i, array ) {
       fileList.push(val + ext);
     });
   } else {
@@ -45,8 +45,9 @@ var inputFiles = fileListHelper(inputs);
  * @param data
  */
 function scriptHandler( inputName, data ) {
+  var result = [];
   var outName = inputName.replace('.in', '.out');
-  var result = mainScript(data.toString());
+  result = mainScript(data.toString());
 
   fs.writeFile(outName, result);
 }
@@ -56,9 +57,9 @@ function scriptHandler( inputName, data ) {
  * @param fileName
  * @param cb
  */
-function readFileHandler(fileName, cb) {
-  fs.readFile(fileName, function(err, data) {
-    if (err) throw err;
+function readFileHandler( fileName, cb ) {
+  fs.readFile(fileName, function ( err, data ) {
+    if ( err ) throw err;
 
     cb(fileName, data);
 
@@ -73,9 +74,20 @@ function readFileHandler(fileName, cb) {
 function mainScript( data ) {
   console.time(fileName + ' running time');
 
-  var items = data.split('\n')[0],
+  var items = data.split('\n')[0].split(' '),
     discount = data.split('\n')[1],
-    result = null;
+    result = 0,
+    sorted;
+
+  if ( items.length < 3 ) {
+    for (var i = 0; i < items.length; i++) {
+      result += items[i];
+    }
+  } else {
+    //  some advance logic here
+    sorted = insertionSort(items);
+    result = sorted;
+  }
 
   console.log('Items: ' + items + '\nDiscount: ' + discount);
 
@@ -84,7 +96,46 @@ function mainScript( data ) {
   return result;
 }
 
+/**
+ * Compare two numeric values
+ * @param a
+ * @param b
+ * @returns {boolean}
+ */
+function compareTwoNumbers( a, b ) {
+  return (a - b) > 0;
+}
 
+/**
+ * Swap tow elements in array
+ * @param arr
+ * @param posA
+ * @param posB
+ */
+function swap( arr, posA, posB ) {
+  var temp = arr[posA];
+  arr[posA] = arr[posB];
+  arr[posB] = temp;
+}
+
+
+/**
+ * Returns new sorted array using Insertion Sort Algorithm
+ * @param arr
+ * @returns {Array|number}
+ */
+function insertionSort( array ) {
+  var arr = array.slice();
+
+  for (var i = 1; i <= arr.length; i++) {
+    var currentPos = i;
+    while (currentPos > 0 && compareTwoNumbers(parseInt(arr[currentPos - 1]), parseInt(arr[currentPos]))) {
+      swap(arr, currentPos, currentPos - 1);
+      currentPos -= 1;
+    }
+  }
+  return arr;
+}
 
 
 inputFiles.forEach(function ( val, index, array ) {
