@@ -26,7 +26,7 @@ function fileListHelper( inputs, ext ) {
   var fileList = [],
     ext = ext || '.in';
 
-  if ( typeof inputs === 'array' ) {
+  if ( typeof inputs !== 'string' ) {
     fileList = [];
     inputs.forEach(function ( val, i, array ) {
       fileList.push(val + ext);
@@ -53,7 +53,7 @@ function scriptHandler( inputName, data ) {
 }
 
 /**
- * Fileread helper which is run callback with file name and file data
+ * File read helper which is run callback with file name and file data
  * @param fileName
  * @param cb
  */
@@ -75,7 +75,7 @@ function mainScript( data ) {
   console.time(fileName + ' running time');
 
   var items = data.split('\n')[0].split(' '),
-    discount = data.split('\n')[1],
+    discount = parseInt(data.split('\n')[1]),
     result = 0,
     sorted;
 
@@ -86,12 +86,41 @@ function mainScript( data ) {
   } else {
     //  some advance logic here
     sorted = insertionSort(items);
-    result = sorted;
+    result = discntHelper(sorted, discount);
   }
 
-  console.log('Items: ' + items + '\nDiscount: ' + discount);
 
+  result = Math.round(result * 100) / 100;
+
+  console.log('Total money needs: $' + result);
   console.timeEnd(fileName + ' running time');
+
+  return result;
+}
+
+function discntHelper( sortedArr, discount ) {
+  var result = 0,
+    right = 0,
+    rightPos = sortedArr.length;
+
+  for (var i = 1; i <= sortedArr.length; i++) {
+
+    var cheapItem = parseInt(sortedArr[i - 1]),
+      expensiveItem = parseInt(sortedArr[rightPos - 1]);
+
+
+    result += cheapItem;
+
+
+    if ( i % 2 === 0 && rightPos > i) {
+      result += (expensiveItem - (expensiveItem * discount / 100));
+      right++;
+      rightPos = sortedArr.length - right;
+    }
+
+    if ( i === rightPos ) break;
+
+  }
 
   return result;
 }
