@@ -90,7 +90,7 @@ function mainScript( data ) {
   }
 
 
-  result = Math.round(result * 100) / 100;
+  result = result.toFixed(2);
 
   console.log('Total money needs: $' + result);
   console.timeEnd(fileName + ' running time');
