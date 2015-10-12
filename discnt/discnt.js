@@ -81,7 +81,7 @@ function mainScript( data ) {
 
   if ( items.length < 3 ) {
     for (var i = 0; i < items.length; i++) {
-      result += items[i];
+      result += parseInt(items[i]);
     }
   } else {
     //  some advance logic here
