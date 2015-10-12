@@ -92,7 +92,6 @@ function mainScript( data ) {
 
   result = result.toFixed(2);
 
-  console.log('Total money needs: $' + result);
   console.timeEnd(fileName + ' running time');
 
   return result;
