@@ -82,28 +82,33 @@ function mainScript( data ) {
   for (var i = 0; i < hamstersNumber; i++) {
     var subset = data[i + 2].split(' ');
     var appetite = +subset[0];
-    var greed = +subset[0];
-    var weightIndex = appetite + greed * (hamstersNumber - 1); // Set "weight" index for each hamster
+    var greed = +subset[1];
+    var weightIndex = appetite + (greed * (hamstersNumber - 1)); // Set "weight" index for each hamster
     hamstersSet[i] = [appetite, greed, weightIndex];
   }
 
+  quickSort(hamstersSet, 2);
 
-  //if ( items.length < 3 ) {
-  //  for (var i = 0; i < items.length; i++) {
-  //    result += parseInt(items[i]);
-  //  }
-  //} else {
-  //  //  some advance logic here
-  //  sorted = insertionSort(items);
-  //  result = discntHelper(sorted, discount);
-  //}
-  //
-  //
-  //result = result.toFixed(2);
-  //
-  //console.timeEnd(fileName + ' running time');
-  //
-  //return result;
+  var totalGreedy = 0;
+
+  var maxHamstersToBuy = 0;
+
+  if ( food < hamstersSet[0][0] ) {
+    return maxHamstersToBuy;
+  }
+
+  for (var j = 0; j < hamstersNumber; j++) {
+    totalGreedy += hamstersSet[j][1];
+    if ( j > 0 && (totalGreedy + hamstersSet[j][0]) > food ) {
+      return maxHamstersToBuy;
+    }
+    maxHamstersToBuy++;
+  }
+
+  console.timeEnd(fileName + ' running time');
+
+  return maxHamstersToBuy;
+
 }
 
 
@@ -114,7 +119,7 @@ function mainScript( data ) {
  * @returns {boolean}
  */
 function compareTwoNumbers( a, b ) {
-  return (a - b) > 0;
+  return (b - a) > 0;
 }
 
 /**
@@ -146,6 +151,51 @@ function insertionSort( array ) {
     }
   }
   return arr;
+}
+
+function getPivot( array, index, left, right ) {
+  var index = index || 0;
+  return array[left][index];
+}
+
+function quickSortRecursive( array, index, left, right ) {
+  var index = index || 0;
+  var pivot = getPivot(array, 2, left, right);
+
+  var leftWritePos = left;
+  var rightWritePos = right;
+
+  while (leftWritePos <= rightWritePos) {
+    while (compareTwoNumbers(array[leftWritePos][index], pivot)) {
+      leftWritePos += 1;
+    }
+
+    while (compareTwoNumbers(pivot, array[rightWritePos][index])) {
+      rightWritePos -= 1;
+    }
+
+    if ( leftWritePos <= rightWritePos ) {
+      if (leftWritePos !== rightWritePos) {
+        swap(array, leftWritePos, rightWritePos);
+      }
+      leftWritePos += 1;
+      rightWritePos -= 1;
+    }
+  }
+
+  if ( left < leftWritePos - 1 ) {
+    quickSortRecursive(array, 2, left, leftWritePos - 1);
+  }
+
+  if ( leftWritePos < right ) {
+    quickSortRecursive(array, 2, leftWritePos, right);
+  }
+
+}
+
+function quickSort( array, index  ) {
+  var index = index || 0;
+  quickSortRecursive(array, index, 0, array.length - 1);
 }
 
 
