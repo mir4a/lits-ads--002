@@ -99,7 +99,7 @@ function mainScript( data ) {
 
   for (var j = 0; j < hamstersNumber; j++) {
     totalGreedy += hamstersSet[j][1];
-    if ( j > 0 && (totalGreedy + hamstersSet[j][0]) > food ) {
+    if ( j > 0 && ((totalGreedy * j) + hamstersSet[j][0]) > food ) {
       return maxHamstersToBuy;
     }
     maxHamstersToBuy++;
@@ -175,7 +175,7 @@ function quickSortRecursive( array, index, left, right ) {
     }
 
     if ( leftWritePos <= rightWritePos ) {
-      if (leftWritePos !== rightWritePos) {
+      if ( leftWritePos !== rightWritePos ) {
         swap(array, leftWritePos, rightWritePos);
       }
       leftWritePos += 1;
@@ -193,7 +193,7 @@ function quickSortRecursive( array, index, left, right ) {
 
 }
 
-function quickSort( array, index  ) {
+function quickSort( array, index ) {
   var index = index || 0;
   quickSortRecursive(array, index, 0, array.length - 1);
 }
