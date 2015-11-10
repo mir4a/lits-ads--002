@@ -90,16 +90,21 @@ function mainScript( data ) {
   quickSort(hamstersSet, 2);
 
   var totalGreedy = 0;
-
+  var totalConsumption = hamstersSet[0][0];
   var maxHamstersToBuy = 0;
 
-  if ( food < hamstersSet[0][0] ) {
+  if ( food < totalConsumption ) {
     return maxHamstersToBuy;
   }
 
   for (var j = 0; j < hamstersNumber; j++) {
     totalGreedy += hamstersSet[j][1];
-    if ( j > 0 && ((totalGreedy * j) + hamstersSet[j][0]) > food ) {
+
+    if ( j > 0 ) {
+      totalConsumption += hamstersSet[j][0];
+    }
+
+    if ( ((totalGreedy * j) + totalConsumption) > food ) {
       return maxHamstersToBuy;
     }
     maxHamstersToBuy++;
