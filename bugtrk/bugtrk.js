@@ -74,6 +74,7 @@ function readFileHandler( fileName, cb ) {
 function mainScript( data ) {
   console.time(fileName + ' running time');
   data = data.split('\n');
+  data = data[0].split(' ');
 
   var boardSize = 0;
 
@@ -81,21 +82,33 @@ function mainScript( data ) {
   var cardWidth = +data[1];
   var cardHeight = +data[2];
 
-  for (var i = 0; i < totalKeys; i++) {
-    keysSet[i] = data[i + 1];
-  }
-
-
-
   console.timeEnd(fileName + ' running time');
 
-  return matchCounter;
+  return calculateBoard(totalCards, cardWidth, cardHeight);
 
 }
 
-function totalSqare(cards, width, height) {
-  return cards * (width + height);
+
+function cardsDivider(cards, width, height) {
+  var minSquare;
+  var minWidth = width * cards;
+  var minHeight = height * cards;
+  var totalSquare = cards * (width + height);
+
+
+  for (var i = 2; i < cards; i++) {
+    minWidth = minWidth % i + Math.floor(minWidth/i);
+    minHeight = minHeight % i + Math.floor(minHeight/i);
+    minSquare = minHeight + minWidth;
+    if (minSquare >= totalSquare) {
+      break;
+    }
+  }
+
+  return minSquare/2;
+
 }
+
 
 function calculateBoard(cards, width, height) {
   var widthTotal = width * cards;
@@ -103,10 +116,8 @@ function calculateBoard(cards, width, height) {
 
   if (widthTotal === heightTotal) {
     return widthTotal;
-  } else if (widthTotal > heightTotal) {
-
   } else {
-
+    return cardsDivider(cards, width, height);
   }
 }
 
