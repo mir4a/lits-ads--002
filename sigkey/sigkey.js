@@ -175,7 +175,7 @@ function mainScript( data ) {
   }
 
 
-  iterateThroughPairs(keysSet, 0);
+  compareSubsetRecursive(keysSet);
 
   console.timeEnd(fileName + ' running time');
   console.log('with result: ' + matchCounter);
@@ -213,31 +213,31 @@ function iterateThroughPairs(arr, left) {
 }
 
 
+function comparePairHashWithReference(pair) {
+  var hash = calculateHashFromString(pair);
+  return hash === PAIR_HASH[pair.length];
+}
+
 function compareSubsetRecursive(arr) {
-  var firstEl = arr[0];
-  arr.splice(0,1);
+  var firstEl = arr.shift();
   var arrLength = arr.length;
   var twoKeys = '';
   var twoKeysHash = 0;
 
-  if (arrLength > 1) {
+  while (arrLength >= 1) {
     for (var i = 0; i < arrLength; i++) {
       twoKeys = firstEl + arr[i];
-      twoKeysHash = calculateHashFromString(twoKeys);
-      if (twoKeysHash === PAIR_HASH[twoKeys.length]) {
+      if (comparePairHashWithReference(twoKeys)) {
         matchCounter++;
         arr.splice(i,1);
         break;
       }
     }
-    compareSubsetRecursive(arr);
-  } else if (arrLength === 1) {
-    twoKeys = firstEl + arr[0];
-    twoKeysHash = calculateHashFromString(twoKeys);
-    if (twoKeysHash === PAIR_HASH[twoKeys.length]) {
-      matchCounter++;
-    }
+    firstEl = arr.shift();
+    arrLength = arr.length;
+
   }
+
 }
 
 function calculateHashFromString(str) {
