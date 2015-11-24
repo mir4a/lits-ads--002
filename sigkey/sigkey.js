@@ -175,12 +175,41 @@ function mainScript( data ) {
   }
 
 
-  compareSubsetRecursive(keysSet);
+  iterateThroughPairs(keysSet, 0);
 
   console.timeEnd(fileName + ' running time');
+  console.log('with result: ' + matchCounter);
 
   return matchCounter;
 
+}
+
+function iterateThroughPairs(arr, left) {
+  var firstEl = arr[left];
+  var secondEl;
+  var pair = '';
+  var pairHash = 0;
+
+  if (arr.length <= 1) {
+    return false;
+  }
+
+  if (left + 1 >= arr.length) {
+    return false;
+  }
+
+  for (var i = left; i < arr.length; i++) {
+    secondEl = arr[left + i + 1];
+    pair = firstEl + secondEl;
+    pairHash = calculateHashFromString(pair);
+    if (pairHash === PAIR_HASH[[pair].length]) {
+      matchCounter++;
+      swap(arr, i, left + 1);
+      break;
+      iterateThroughPairs(arr, left + 2);
+    }
+  }
+  iterateThroughPairs(arr, left + 1);
 }
 
 
