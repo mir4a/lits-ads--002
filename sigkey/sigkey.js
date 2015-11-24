@@ -63,7 +63,36 @@ var CHAR_HASH = {
   z: 25
 };
 
+var PAIR_HASH = [
+  null,
+  0,
+  1,
+  3,
+  6,
+  10,
+  15,
+  21,
+  28,
+  36,
+  45,
+  55,
+  66,
+  78,
+  91,
+  105,
+  120,
+  136,
+  153,
+  171,
+  190,
+  210,
+  231,
+  253,
+  276,
+  300,
+  325];
 
+var matchCounter = 0;
 
 /**
  * Get the arguments of script call except first two (program name and script name)
@@ -106,7 +135,7 @@ var inputFiles = fileListHelper(inputs);
  * @param data
  */
 function scriptHandler( inputName, data ) {
-  var result = [];
+  var result;
   var outName = inputName.replace('.in', '.out');
   result = mainScript(data.toString());
 
@@ -136,6 +165,8 @@ function mainScript( data ) {
   console.time(fileName + ' running time');
   data = data.split('\n');
 
+  matchCounter = 0;
+
   var totalKeys = +data[0];
   var keysSet = new Array(totalKeys);
 
@@ -144,37 +175,48 @@ function mainScript( data ) {
   }
 
 
-
+  compareSubsetRecursive(keysSet);
 
   console.timeEnd(fileName + ' running time');
 
-  return ;
+  return matchCounter;
 
 }
 
 
 function compareSubsetRecursive(arr) {
   var firstEl = arr[0];
-  var firstLength = firstEl.length;
-  arr = arr.splice(0,1);
+  arr.splice(0,1);
   var arrLength = arr.length;
+  var twoKeys = '';
+  var twoKeysHash = 0;
 
-  while (arrLength > 1) {
-
+  if (arrLength > 1) {
     for (var i = 0; i < arrLength; i++) {
-
-      if (firstLength + arr[i].length === 2) {
-
-        if (CHAR_SET[0] === firstEl || CHAR_SET[1] === firstEl) {
-
-        }
-
+      twoKeys = firstEl + arr[i];
+      twoKeysHash = calculateHashFromString(twoKeys);
+      if (twoKeysHash === PAIR_HASH[twoKeys.length]) {
+        matchCounter++;
+        arr.splice(i,1);
+        break;
       }
-
     }
-
+    compareSubsetRecursive(arr);
+  } else if (arrLength === 1) {
+    twoKeys = firstEl + arr[0];
+    twoKeysHash = calculateHashFromString(twoKeys);
+    if (twoKeysHash === PAIR_HASH[twoKeys.length]) {
+      matchCounter++;
+    }
   }
+}
 
+function calculateHashFromString(str) {
+  var total = 0;
+  for (var i=0; i < str.length; i++) {
+    total += CHAR_HASH[str[i]];
+  }
+  return total;
 }
 
 function compare(a,b) {
