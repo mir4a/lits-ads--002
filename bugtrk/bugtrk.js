@@ -100,9 +100,14 @@ function cardsDivider(cards, width, height) {
     minWidth = minWidth % i + Math.floor(minWidth/i);
     minHeight = minHeight % i + Math.floor(minHeight/i);
     minSquare = minHeight + minWidth;
-    if (minSquare >= totalSquare) {
-      break;
+    if (minWidth > minHeight) {
+      minSquare = minHeight * 2;
+    } else {
+      minSquare = minWidth * 2;
     }
+    //if (minSquare < totalSquare) {
+    //  return minSquare/2;
+    //}
   }
 
   return minSquare/2;
