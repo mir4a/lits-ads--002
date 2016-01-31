@@ -58,7 +58,7 @@ function scriptHandler( inputName, data ) {
  * @param cb
  */
 function readFileHandler( fileName, cb ) {
-  fs.readFile(fileName, function ( err, data ) {
+  fs.readFile(fileName, { encoding: 'utf-8' }, function ( err, data ) {
     if ( err ) throw err;
 
     cb(fileName, data);
