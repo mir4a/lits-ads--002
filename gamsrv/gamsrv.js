@@ -2,6 +2,7 @@ const readline = require('readline');
 const fs = require('fs');
 const process = require('process');
 const path = require('path');
+const fileName = path.basename(__filename, '.js');
 const Graph = require('./graph').Graph;
 const Vertex = require('./graph').Vertex;
 const Edge = require('./graph').Edge;
@@ -77,7 +78,7 @@ function buildGraph( data ) {
   var data = data.split('\n');
   var verticesLength = +data[0].split(' ')[0];
   var edgesLength = +data[0].split(' ')[1];
-  var clients = data[1].split(' ').map((num)=> +num);
+  var clients = data[1].split(' ');
   var vertices = {};
   var edges = [];
 
@@ -90,8 +91,13 @@ function buildGraph( data ) {
     endVertex = _data[1];
     weight = +_data[2];
 
-    if (!(startVertex in vertices)) vertices[startVertex] = new Vertex(startVertex, (startVertex in clients));
-    if (!(endVertex in vertices)) vertices[endVertex] = new Vertex(endVertex, (endVertex in clients));
+    if (!(startVertex in vertices)) {
+      vertices[startVertex] = new Vertex(startVertex, (clients.indexOf(startVertex) >= 0));
+    }
+    if (!(endVertex in vertices)) {
+      vertices[endVertex] = new Vertex(endVertex, (clients.indexOf(endVertex) >=0));
+    }
+
 
     edge = new Edge(vertices[startVertex], vertices[endVertex], weight);
     vertices[startVertex].outboundEdges.push(edge);
