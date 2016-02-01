@@ -5,6 +5,7 @@ const path = require('path');
 const Graph = require('./graph').Graph;
 const Vertex = require('./graph').Vertex;
 const Edge = require('./graph').Edge;
+const BinaryHeap = require('./binary-heap');
 
 /**
  * Get the arguments of script call except first two (program name and script name)
@@ -72,7 +73,7 @@ inputFiles.forEach(function ( val, index, array ) {
   readFileHandler(val, scriptHandler);
 });
 
-function mainScript( data ) {
+function buildGraph( data ) {
   var data = data.split('\n');
   var verticesLength = +data[0].split(' ')[0];
   var edgesLength = +data[0].split(' ')[1];
@@ -102,8 +103,70 @@ function mainScript( data ) {
     edges.push(reverseEdge)
   }
 
-  var graph = new Graph(vertices, edges);
+  return new Graph(vertices, edges);
+}
 
-  debugger;
+function mainScript( data ) {
+
+
+  var graph = buildGraph(data);
+
+  var maxLatency = solve(graph);
+
+  return maxLatency;
+}
+
+function solve(graph) {
+  var maxLatency = 10e14;
+
+  for (label in graph.vertices) {
+    var vertex = graph.vertices[label];
+    if (!vertex.isClient) {
+      var distances = dijikstra(graph, vertex);
+      var max = [];
+      distances.forEach((el) => { if (el[1]) max.push(el[0])});
+      maxLatency = Math.min(maxLatency, Math.max.apply(null, max));
+    }
+  }
+
+  return maxLatency;
+}
+
+function dijikstra(graph, startVertex) {
+  const INFINITY = 10e14;
+  var distances = {};
+  for (label in graph.vertices) {
+    distances[label] = INFINITY;
+  }
+  distances[startVertex.label] = 0;
+
+  var heap = new BinaryHeap((x)=>{return x.distance});
+  heap.push({vertex:startVertex,distance:0});
+
+  var result = [];
+
+  while (heap.size() > 0) {
+    var topHeap = heap.pop();
+    var distance = topHeap.distance;
+    var shortestDistanceVertex = topHeap.vertex;
+
+
+    shortestDistanceVertex.outboundEdges.forEach((edge) =>{
+      var neighbourVertex = edge.endVertex;
+      var alternateDistance = distances[shortestDistanceVertex.label] + edge.weight;
+
+      if (alternateDistance < distances[neighbourVertex.label]) {
+        distances[neighbourVertex.label] = alternateDistance;
+        heap.push({vertex: neighbourVertex, distance:alternateDistance});
+      }
+    });
+  }
+
+  for (vertex in graph.vertices) {
+    result.push([distances[vertex], graph.vertices[vertex].isClient]);
+  }
+
+  return result;
+
 }
 
