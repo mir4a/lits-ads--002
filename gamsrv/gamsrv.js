@@ -82,7 +82,7 @@ function buildGraph( data ) {
   var vertices = {};
   var edges = [];
 
-  for (var i = 2; i < edgesLength; i++) {
+  for (var i = 2; i < edgesLength + 2; i++) {
     var edge, reverseEdge;
     var startVertex, endVertex, weight;
 
@@ -113,12 +113,12 @@ function buildGraph( data ) {
 }
 
 function mainScript( data ) {
-
+  //console.time('test');
 
   var graph = buildGraph(data);
 
   var maxLatency = solve(graph);
-
+  //console.timeEnd('test');
   return maxLatency;
 }
 
