@@ -57,7 +57,7 @@ function scriptHandler( inputName, data ) {
  * @param cb
  */
 function readFileHandler( fileName, cb ) {
-  fs.readFile(fileName, function ( err, data ) {
+  fs.readFile(fileName, { encoding: 'utf-8' }, function ( err, data ) {
     if ( err ) throw err;
 
     cb(fileName, data);
@@ -71,10 +71,7 @@ function readFileHandler( fileName, cb ) {
  * @returns {*}
  */
 function mainScript( data ) {
-  data = data.split('\n');
-  data = data[0].split(' ');
-
-  var boardSize = 0;
+  data = data.split(' ');
 
   var totalCards = +data[0];
   var cardWidth = +data[1];
@@ -85,12 +82,12 @@ function mainScript( data ) {
 }
 
 
-function cardsDivider(cards, width, height) {
-  var minSquare;
-  var minWidth = width * cards;
-  var minHeight = height * cards;
+function calculateBoard(cards, width, height) {
+  if (cards === 2) {
+    return Math.min(width, height) * 2;
+  }
   var totalSquare = cards * (width * height);
-  var boardMin = -~Math.sqrt(totalSquare);
+  var boardMin = width === height ? Math.sqrt(totalSquare) : -~Math.sqrt(totalSquare);
   var boardMax = boardMin + 1;
 
   var boardMinWidthCards = ~~(boardMin/width);
@@ -102,25 +99,13 @@ function cardsDivider(cards, width, height) {
   var boardMaxCards = boardMaxWidthCards * boardMaxHeightCards;
 
   if (boardMinCards >= cards) {
-    return boardMinCards;
+    return boardMin;
   } else if (boardMaxCards >= cards) {
-    return boardMaxCards;
+    return boardMax;
   } else {
-    return cards/2;
+    return Math.ceil(cards/2);
   }
 
-}
-
-
-function calculateBoard(cards, width, height) {
-  var widthTotal = width * cards;
-  var heightTotal = height * cards;
-
-  if (widthTotal === heightTotal) {
-    return widthTotal;
-  } else {
-    return cardsDivider(cards, width, height);
-  }
 }
 
 
