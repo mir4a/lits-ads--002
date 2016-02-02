@@ -1,3 +1,7 @@
+# Skip all in and out files in master
+*.in
+*.out
+
 # Logs
 logs
 *.log
