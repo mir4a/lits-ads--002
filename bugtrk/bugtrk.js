@@ -1,8 +1,7 @@
-var path = require('path'),
-  process = require('process'),
-  fs = require('fs'),
-  fileName = path.basename(__filename, '.js');
-
+const fs = require('fs');
+const process = require('process');
+const path = require('path');
+const fileName = path.basename(__filename, '.js');
 
 /**
  * Get the arguments of script call except first two (program name and script name)
@@ -72,7 +71,6 @@ function readFileHandler( fileName, cb ) {
  * @returns {*}
  */
 function mainScript( data ) {
-  console.time(fileName + ' running time');
   data = data.split('\n');
   data = data[0].split(' ');
 
@@ -81,8 +79,6 @@ function mainScript( data ) {
   var totalCards = +data[0];
   var cardWidth = +data[1];
   var cardHeight = +data[2];
-
-  console.timeEnd(fileName + ' running time');
 
   return calculateBoard(totalCards, cardWidth, cardHeight);
 
@@ -93,24 +89,25 @@ function cardsDivider(cards, width, height) {
   var minSquare;
   var minWidth = width * cards;
   var minHeight = height * cards;
-  var totalSquare = cards * (width + height);
+  var totalSquare = cards * (width * height);
+  var boardMin = -~Math.sqrt(totalSquare);
+  var boardMax = boardMin + 1;
 
+  var boardMinWidthCards = ~~(boardMin/width);
+  var boardMinHeightCards = ~~(boardMin/height);
+  var boardMinCards= boardMinWidthCards * boardMinHeightCards;
 
-  for (var i = 2; i < cards; i++) {
-    minWidth = minWidth % i + Math.floor(minWidth/i);
-    minHeight = minHeight % i + Math.floor(minHeight/i);
-    minSquare = minHeight + minWidth;
-    if (minWidth > minHeight) {
-      minSquare = minHeight * 2;
-    } else {
-      minSquare = minWidth * 2;
-    }
-    //if (minSquare < totalSquare) {
-    //  return minSquare/2;
-    //}
+  var boardMaxWidthCards = ~~(boardMax/width);
+  var boardMaxHeightCards = ~~(boardMax/height);
+  var boardMaxCards = boardMaxWidthCards * boardMaxHeightCards;
+
+  if (boardMinCards >= cards) {
+    return boardMinCards;
+  } else if (boardMaxCards >= cards) {
+    return boardMaxCards;
+  } else {
+    return cards/2;
   }
-
-  return minSquare/2;
 
 }
 
